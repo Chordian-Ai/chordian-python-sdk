@@ -1,0 +1,84 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "chordian"
+dynamic = ["version"]
+description = "Official Python SDK for the Chordian AI platform (Company & People Search, Deep Research, Enterprise Search, and Memory APIs)."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [{ name = "Chordian", email = "support@chordian.ai" }]
+keywords = ["chordian", "ai", "search", "research", "knowledge-graph", "sdk", "enterprise-search"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
+dependencies = [
+    "httpx>=0.25,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "respx>=0.20",
+    "mypy>=1.8",
+    "ruff>=0.5",
+    "build>=1.0",
+    "twine>=5.0",
+]
+
+[project.urls]
+Homepage = "https://chordian.ai"
+Documentation = "https://documentation.chordian.ai"
+Repository = "https://github.com/chordian-ai/chordian-python"
+Issues = "https://github.com/chordian-ai/chordian-python/issues"
+
+[tool.hatch.version]
+path = "chordian/version.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["chordian"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/chordian",
+    "/examples",
+    "/tests",
+    "/README.md",
+    "/PUBLISHING.md",
+    "/CHANGELOG.md",
+    "/LICENSE",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["B008", "UP006", "UP035"]
+
+[tool.mypy]
+# Type-check assuming the interpreter mypy runs under (CI runs it across the
+# supported matrix). The package itself targets Python 3.8+.
+ignore_missing_imports = true
+warn_unused_ignores = false
+no_implicit_optional = true
+files = ["chordian"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
