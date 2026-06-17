@@ -12,6 +12,7 @@ from .._client import Request, build_body
 from ._types import (
     ChatResponse,
     Department,
+    DepartmentList,
     GenerateColumn,
     GenerateRecord,
     JobResponse,
@@ -39,8 +40,11 @@ class Memory:
     """
 
     @staticmethod
-    def list_departments() -> List[Department]:
-        """List all knowledge-graph departments for the tenant."""
+    def list_departments() -> DepartmentList:
+        """List all knowledge-graph departments for the tenant.
+
+        :returns: ``{"departments": [...]}`` — read the ``departments`` key.
+        """
         return Request("/memory/departments", "GET", backend="memory").perform()
 
     @staticmethod

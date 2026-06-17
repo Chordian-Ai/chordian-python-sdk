@@ -37,6 +37,14 @@ def test_send_chat_message_stream(respx_mock):
     assert events[0].json == {"text": "hi"}
 
 
+def test_get_chat_sessions_shape(respx_mock):
+    respx_mock.get(f"{CORE}/chat/get-user-chat-sessions").mock(
+        return_value=httpx.Response(200, json={"sessions": [{"id": "s1"}]})
+    )
+    resp = chordian.EnterpriseSearch.get_chat_sessions()
+    assert resp["sessions"][0]["id"] == "s1"
+
+
 def test_get_connectors_query_param(respx_mock):
     route = respx_mock.get(f"{CORE}/manage/admin/connector").mock(
         return_value=httpx.Response(200, json=[])

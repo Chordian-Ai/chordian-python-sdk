@@ -22,6 +22,10 @@ class Department(TypedDict, total=False):
     list_id: str
 
 
+class DepartmentList(TypedDict, total=False):
+    departments: List[Department]
+
+
 class JobResponse(TypedDict, total=False):
     jobId: str
     status: str

@@ -21,10 +21,10 @@ def test_chat_routes_to_memory_base_url(respx_mock):
 
 def test_list_departments(respx_mock):
     respx_mock.get(f"{MEMORY}/memory/departments").mock(
-        return_value=httpx.Response(200, json=[{"graph_id": "g1"}])
+        return_value=httpx.Response(200, json={"departments": [{"graph_id": "g1"}]})
     )
     resp = chordian.Memory.list_departments()
-    assert resp[0]["graph_id"] == "g1"
+    assert resp["departments"][0]["graph_id"] == "g1"
 
 
 def test_create_department_drops_none(respx_mock):

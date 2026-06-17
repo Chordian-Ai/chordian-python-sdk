@@ -8,6 +8,7 @@ from .._sse import SSEEvent
 from ._types import (
     ConnectorConfig,
     CreateChatSessionResponse,
+    GetChatSessionsResponse,
     RenameChatSessionResponse,
     RunOnceResponse,
     UploadFileResponse,
@@ -90,8 +91,11 @@ class EnterpriseSearch:
         return request.perform()
 
     @staticmethod
-    def get_chat_sessions() -> List[Dict[str, Any]]:
-        """List the authenticated user's chat sessions."""
+    def get_chat_sessions() -> GetChatSessionsResponse:
+        """List the authenticated user's chat sessions.
+
+        :returns: ``{"sessions": [...]}`` — read the ``sessions`` key.
+        """
         return Request("/chat/get-user-chat-sessions", "GET").perform()
 
     @staticmethod

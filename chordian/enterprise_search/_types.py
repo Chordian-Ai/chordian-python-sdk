@@ -12,6 +12,10 @@ class CreateChatSessionResponse(TypedDict, total=False):
     chat_session_id: str
 
 
+class GetChatSessionsResponse(TypedDict, total=False):
+    sessions: List[Dict[str, Any]]
+
+
 class RenameChatSessionResponse(TypedDict, total=False):
     new_name: str
 
