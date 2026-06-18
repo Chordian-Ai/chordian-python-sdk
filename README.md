@@ -170,7 +170,22 @@ except ChordianError as e:
 ```
 
 Other subclasses: `NoApiKeyError`, `PermissionDeniedError`, `NotFoundError`,
-`ValidationError`, `ServerError`, `ApiError`.
+`ValidationError`, `ServerError`, `APITimeoutError`, `APIConnectionError`, `ApiError`.
+
+### Timeouts and long-running endpoints
+
+`chordian.timeout` defaults to 30 seconds. Some endpoints respond synchronously and
+block until their work finishes — notably `CompanySearch.start` / `continue_` and
+`PeopleSearch.start` / `continue_`. For those, raise the timeout; for streaming
+(`Research.stream`, `send_chat_message(stream=True)`), disable it:
+
+```python
+chordian.timeout = 300    # seconds, for long-running start/continue calls
+chordian.timeout = None   # no timeout, for SSE streaming
+```
+
+A timeout raises `chordian.APITimeoutError`; an unreachable host raises
+`chordian.APIConnectionError`.
 
 ## Examples
 
@@ -188,10 +203,6 @@ pytest            # run the (offline) test suite
 ruff check .      # lint
 mypy chordian     # type-check
 ```
-
-## Publishing
-
-See [PUBLISHING.md](PUBLISHING.md) for releasing to TestPyPI and PyPI.
 
 ## License
 

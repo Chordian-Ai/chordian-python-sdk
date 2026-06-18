@@ -20,7 +20,9 @@ from ._sse import SSEEvent
 from .company_search import CompanySearch
 from .enterprise_search import EnterpriseSearch
 from .exceptions import (
+    APIConnectionError,
     ApiError,
+    APITimeoutError,
     AuthenticationError,
     ChordianError,
     NoApiKeyError,
@@ -58,8 +60,12 @@ core_base_url: str = config.CORE_BASE_URL
 memory_base_url: str = config.MEMORY_BASE_URL
 """Base URL for the memory / knowledge-graph service."""
 
-timeout: float = config.DEFAULT_TIMEOUT
-"""Per-request timeout, in seconds."""
+timeout: Optional[float] = config.DEFAULT_TIMEOUT
+"""Per-request timeout, in seconds. Set to ``None`` to disable the timeout.
+
+Raise this for long-running synchronous endpoints (e.g. ``CompanySearch.start``,
+``PeopleSearch.start``) which block server-side until the workflow responds.
+"""
 
 __all__ = [
     "__version__",
@@ -85,5 +91,7 @@ __all__ = [
     "ValidationError",
     "RateLimitError",
     "ServerError",
+    "APITimeoutError",
+    "APIConnectionError",
     "ApiError",
 ]

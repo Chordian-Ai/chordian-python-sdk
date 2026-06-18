@@ -82,7 +82,8 @@ class PeopleSearch:
 
         :param query: Search query (name, email, job title, keyword).
         :param limit: Maximum number of results to return.
-        :param path: Searchable field names (e.g. ``["fullName", "emails.email"]``).
+        :param path: Searchable field names from the API's allowed enum, e.g.
+            ``["fullName", "linkedin", "email", "position", "current_employer"]``.
         :param fuzzy_max_edits: Maximum edit distance for fuzzy matching.
         """
         body = build_body(

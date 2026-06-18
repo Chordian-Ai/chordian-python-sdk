@@ -4,6 +4,8 @@ from conftest import CORE
 
 import chordian
 from chordian.exceptions import (
+    APIConnectionError,
+    APITimeoutError,
     AuthenticationError,
     NoApiKeyError,
     NotFoundError,
@@ -48,6 +50,22 @@ def test_error_status_mapping(respx_mock, status, exc):
         chordian.CompanySearch.get_lists()
     assert info.value.status_code == status
     assert "boom" in str(info.value)
+
+
+def test_timeout_wrapped(respx_mock):
+    respx_mock.get(f"{CORE}/company-search/getLists").mock(
+        side_effect=httpx.ReadTimeout("timed out")
+    )
+    with pytest.raises(APITimeoutError):
+        chordian.CompanySearch.get_lists()
+
+
+def test_connection_error_wrapped(respx_mock):
+    respx_mock.get(f"{CORE}/company-search/getLists").mock(
+        side_effect=httpx.ConnectError("no route")
+    )
+    with pytest.raises(APIConnectionError):
+        chordian.CompanySearch.get_lists()
 
 
 def test_base_url_override(respx_mock):

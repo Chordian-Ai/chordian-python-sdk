@@ -15,7 +15,12 @@ from typing import Any, Dict, Iterator, Mapping, Optional
 import httpx
 
 from ._sse import SSEEvent, parse_sse
-from .exceptions import NoApiKeyError, error_for_status
+from .exceptions import (
+    APIConnectionError,
+    APITimeoutError,
+    NoApiKeyError,
+    error_for_status,
+)
 
 # A single shared client gives us connection pooling across calls. It is created
 # lazily so that import of the package never opens a socket.
@@ -56,7 +61,7 @@ def _resolve_base_url(backend: str) -> str:
     return chordian.core_base_url.rstrip("/")
 
 
-def _resolve_timeout() -> float:
+def _resolve_timeout() -> Optional[float]:
     import chordian
 
     return chordian.timeout
@@ -158,7 +163,14 @@ class Request:
         """
         client = _get_http_client()
         kwargs = self._request_kwargs(sending_multipart=self.files is not None)
-        response = client.request(self.verb, self.url, **kwargs)
+        try:
+            response = client.request(self.verb, self.url, **kwargs)
+        except httpx.TimeoutException as exc:
+            raise APITimeoutError(_timeout_message(self.url, kwargs["timeout"])) from exc
+        except httpx.TransportError as exc:
+            raise APIConnectionError(
+                f"Could not connect to {self.url}: {exc}"
+            ) from exc
         return _handle_response(response)
 
     def stream(self) -> Iterator[SSEEvent]:
@@ -169,11 +181,16 @@ class Request:
         client = _get_http_client()
         kwargs = self._request_kwargs(sending_multipart=self.files is not None)
         kwargs["headers"]["Accept"] = "text/event-stream"
-        with client.stream(self.verb, self.url, **kwargs) as response:
-            if response.status_code >= 400:
-                response.read()
-                _raise_for_response(response)
-            yield from parse_sse(response.iter_lines())
+        try:
+            with client.stream(self.verb, self.url, **kwargs) as response:
+                if response.status_code >= 400:
+                    response.read()
+                    _raise_for_response(response)
+                yield from parse_sse(response.iter_lines())
+        except httpx.TimeoutException as exc:
+            raise APITimeoutError(_timeout_message(self.url, kwargs["timeout"])) from exc
+        except httpx.TransportError as exc:
+            raise APIConnectionError(f"Could not connect to {self.url}: {exc}") from exc
 
 
 def _handle_response(response: httpx.Response) -> Any:
@@ -205,6 +222,14 @@ def _raise_for_response(response: httpx.Response) -> None:
             message = response.text
     raise error_for_status(
         response.status_code, message, error_type=error_type, body=body
+    )
+
+
+def _timeout_message(url: str, timeout: Any) -> str:
+    return (
+        f"Request to {url} timed out after {timeout}s. Long-running endpoints "
+        "(e.g. CompanySearch.start) may need a higher timeout — set "
+        "`chordian.timeout = 300` (seconds), or `None` to disable it."
     )
 
 

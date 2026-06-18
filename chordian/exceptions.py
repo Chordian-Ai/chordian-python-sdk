@@ -63,6 +63,19 @@ class ServerError(ChordianError):
     """Raised on ``5xx`` – Chordian encountered an internal error."""
 
 
+class APITimeoutError(ChordianError):
+    """Raised when a request exceeds the configured timeout.
+
+    Long-running endpoints (e.g. ``CompanySearch.start``) can take a while to
+    respond. Increase ``chordian.timeout`` (seconds), or set it to ``None`` to
+    disable the timeout entirely.
+    """
+
+
+class APIConnectionError(ChordianError):
+    """Raised when the SDK cannot reach the Chordian API (network/DNS/TLS)."""
+
+
 class ApiError(ChordianError):
     """Raised for any other non-2xx response not covered above."""
 
