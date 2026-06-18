@@ -8,7 +8,7 @@ need: ``event``, ``data`` and ``id`` fields, blank line dispatches the event).
 """
 
 import json
-from typing import Any, Iterable, Iterator, NamedTuple, Optional
+from typing import Any, Iterable, Iterator, List, NamedTuple, Optional
 
 
 class SSEEvent(NamedTuple):
@@ -41,7 +41,7 @@ def parse_sse(lines: Iterable[str]) -> Iterator[SSEEvent]:
     multiple lines, joined with ``"\\n"`` per the spec.
     """
     event_type = ""
-    data_lines: list[str] = []
+    data_lines: List[str] = []
     last_id: Optional[str] = None
 
     for raw in lines:
