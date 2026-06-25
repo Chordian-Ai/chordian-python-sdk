@@ -17,6 +17,8 @@ from typing import Optional
 
 from . import config
 from ._sse import SSEEvent
+from .agentic_crawler import AgenticCrawler
+from .chordian_deep_search import ChordianDeepSearch
 from .company_search import CompanySearch
 from .enterprise_search import EnterpriseSearch
 from .exceptions import (
@@ -35,6 +37,7 @@ from .exceptions import (
 from .memory import Memory
 from .people_search import PeopleSearch
 from .research import Research
+from .webandreasearch import WebAndResearch
 from .version import __version__
 
 # ---------------------------------------------------------------------------
@@ -75,9 +78,12 @@ __all__ = [
     "memory_base_url",
     "timeout",
     # Resources
+    "AgenticCrawler",
+    "ChordianDeepSearch",
     "CompanySearch",
     "PeopleSearch",
     "Research",
+    "WebAndResearch",
     "EnterpriseSearch",
     "Memory",
     # Streaming

@@ -8,7 +8,6 @@ This module is internal — application code should use the resource classes
 (``chordian.CompanySearch`` etc.), not :class:`Request` directly.
 """
 
-import json as _json
 import os
 from typing import Any, Dict, Iterator, Mapping, Optional
 
@@ -204,6 +203,21 @@ def _handle_response(response: httpx.Response) -> Any:
         return response.text
 
 
+def _format_validation_detail(detail: list) -> str:
+    """Turn a FastAPI ``detail`` list into a readable error message."""
+    lines = []
+    for item in detail:
+        if not isinstance(item, dict):
+            lines.append(str(item))
+            continue
+        loc = item.get("loc", ())
+        field_parts = [str(part) for part in loc if part != "body"]
+        field = ".".join(field_parts) if field_parts else "request"
+        msg = item.get("msg", "validation error")
+        lines.append(f"{field}: {msg}")
+    return "; ".join(lines)
+
+
 def _raise_for_response(response: httpx.Response) -> None:
     message = f"HTTP {response.status_code}"
     error_type = None
@@ -212,8 +226,8 @@ def _raise_for_response(response: httpx.Response) -> None:
         body = response.json()
         if isinstance(body, dict):
             detail = body.get("detail") or body.get("message") or body.get("error")
-            if isinstance(detail, list):  # FastAPI validation errors
-                detail = _json.dumps(detail)
+            if isinstance(detail, list):
+                detail = _format_validation_detail(detail)
             if detail:
                 message = str(detail)
             error_type = body.get("type") or body.get("error_type")

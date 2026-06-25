@@ -75,3 +75,23 @@ def test_base_url_override(respx_mock):
     )
     chordian.CompanySearch.get_lists()
     assert route.called
+
+
+def test_fastapi_validation_detail_formatted(respx_mock):
+    respx_mock.get(f"{CORE}/company-search/getLists").mock(
+        return_value=httpx.Response(
+            422,
+            json={
+                "detail": [
+                    {
+                        "loc": ["body", "proxy_country_code"],
+                        "msg": "Field required",
+                        "type": "value_error",
+                    }
+                ]
+            },
+        )
+    )
+    with pytest.raises(ValidationError) as info:
+        chordian.CompanySearch.get_lists()
+    assert str(info.value) == "[422] proxy_country_code: Field required"
