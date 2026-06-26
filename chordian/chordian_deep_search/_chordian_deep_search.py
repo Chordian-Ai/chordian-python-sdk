@@ -9,7 +9,7 @@ from .._validation import (
     require_non_empty_prompt,
     validate_proxy_settings,
 )
-from ._types import StartResponse, UploadResponse
+from ._types import StartResponse
 
 FileInput = Union[str, "os.PathLike[str]", tuple]
 
@@ -56,7 +56,8 @@ class ChordianDeepSearch:
         :param proxy_country_code: ISO country code for the proxy; required when
             ``proxy`` is ``True``.
         :param workspace_id: Optional workspace id for file-based chat.
-        :returns: ``{"success", "thread_id", "list_id", "websocket_url", "live_url", "workspace_id", "status"}``.
+        :returns: ``{"success", "thread_id", "list_id", "websocket_url",
+            "live_url", "workspace_id", "status"}``.
         """
         normalized_proxy = proxy if proxy is not None else False
         normalized_live_url = live_url if live_url is not None else True

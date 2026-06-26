@@ -37,8 +37,8 @@ from .exceptions import (
 from .memory import Memory
 from .people_search import PeopleSearch
 from .research import Research
-from .webandreasearch import WebAndResearch
 from .version import __version__
+from .webandreasearch import WebAndResearch
 
 # ---------------------------------------------------------------------------
 # Module-level configuration. Assign to these after importing the package.
