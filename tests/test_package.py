@@ -8,9 +8,12 @@ def test_version_is_exposed():
 
 def test_resources_are_exported():
     for name in (
+        "AgenticCrawler",
+        "ChordianDeepSearch",
         "CompanySearch",
         "PeopleSearch",
         "Research",
+        "WebAndResearch",
         "EnterpriseSearch",
         "Memory",
     ):
