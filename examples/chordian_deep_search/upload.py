@@ -1,8 +1,14 @@
-"""Upload a file into a Chordian deep search workspace."""
+"""ChordianDeepSearch.upload — upload a file into a deep search workspace.
+
+    export CHORDIAN_API_KEY="on_tenant_12345.xxxxxxxx"
+    python examples/chordian_deep_search/upload.py
+"""
+
+import os
 
 import chordian
 
-chordian.api_key = "on_tenant_12345.xxxxxxxx"
+chordian.api_key = os.environ["CHORDIAN_API_KEY"]
 
 result = chordian.ChordianDeepSearch.upload(
     "document.md",
